@@ -1,4 +1,9 @@
-#include "keyboard.h" // for get keyboard keys (getch())
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// Maze game
+// P.S: Maze generator dont main! Source: https://habr.com/ru/post/319532/
+// V1.0
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#include "keyboard.h"
 #include <iostream>
 using namespace std;
 
@@ -6,27 +11,28 @@ bool deadend(int, int, int**, int, int); // Функция проверки ту
 void visual(int **, int, int);  // Отображение лабиринта в терминале
 void mazegen(int **, int, int); // Сам генератор лабиринта
 const bool wall = false, pass = true;
-int winX = 0;
-int winY = 0;
 
 int main() {
 	srand(time(0));
+	system("clear");
 
 	int height = 0;
 	int width  = 0;
-	cout << "Set height: "; cin >> height;
-	cout << "Set width:  "; cin >> width;
-	
+	cout << "Правила размеры лабиринта могут быть только нечетными!\n";
+	cout << "Используй клавишы 'a', 'd', 'w', 's' для перемещения и 'r' для перезапуска игры,\n а 'q' для выхода.\n";
+	cout << "Если что здесь нет определенного финиша! Удачи =)\n";
+	cout << "Set height: "; cin >> height; // get height of maze
+	cout << "Set width:  "; cin >> width;  // get width of maze
+
+	// create and init maze array
 	int** maze = new int*[height]; 
 	for(int i = 0; i < height; ++i) {
 		maze[i] = new int[width];
 	}
-		
 	mazegen(maze, height, width);
 	// move
 	short x = 1;
 	short y = 1;
-	system("clear");
 	while (true) {
 		system("clear");	
 		//printf("\033[%d;%dH", 28, 0);
@@ -40,36 +46,38 @@ int main() {
 		cout << "\e\[31m■\e[0m";		
 		// get type switches
 		switch (getch()) {
-			case 'w':
+			case 'w': // Up
 				--y;
 				if (maze[y][x] == wall) ++y; // collision
 		 		break;
-			case 's':
+			case 's': // Down
 				++y;
 				if (maze[y][x] == wall) --y; // collision
 				break;
-			case 'a':
+			case 'a': // Left
 				--x;
 				if (maze[y][x] == wall) ++x; // collision
 				break;
-			case 'd':
+			case 'd': // Right
 				++x;
 				if (maze[y][x] == wall) --x; // collision
 				break;
+			case 'q': // Exit
+				printf("\033[%d;%dH", height+1, 0);
+				exit(0);
+				break;
+			case 'r': // Restart game
+				main();
+				break;
 			default:
-				std::cout << "LOX\n";
-		}
-		if (x == winX && y == winY) {
-			system("clear");
-			printf("\033[%d;%dH", (height-1)/2, (width-1)/2);
-			cout << "You win!\n";
+				break;
 		}
 	}
 	
-	for(int i = 0; i < height; ++i) 
-    delete[] maze[i];
-    delete[] maze;
-
+	for(int i = 0; i < height; ++i) {
+		delete[] maze[i];
+		delete[] maze;
+	}
 	return 0;
 }
 
@@ -80,8 +88,6 @@ void visual(int **maze, int height, int width) {
 		}
 		cout << endl;
 	}
-	//printf("\033[%d;%dH", winY, winX);
-	//cout << "\e[32m■\e[0m" << '\n';
 }
 
 void mazegen(int **maze, int height, int width) {
@@ -93,18 +99,17 @@ void mazegen(int **maze, int height, int width) {
 		}
 	}
 
-	x = 3; y = 5; a = 0; // Точка приземления крота и счетчик
-	while(a < height*width){ // Да, простите, костыль, иначе есть как, но лень
-		maze[y][x] = pass;
-		++a;
+	x = 3; y = 5; a = 0; // Начальные координаты и счетчик
+	while(a < height*width) {
+		maze[y][x] = pass; ++a;
 		while(true){ // Бесконечный цикл, который прерывается только тупиком
 			c = rand()%4; // Напоминаю, что крот прорывает
-			switch(c){  // по две клетки в одном направлении за прыжок
-				case 0: if(y != 1) {
+			switch(c) {	  // по две клетки в одном направлении за прыжок
+				case 0: if(y != 1) { // Вверх
 					if (maze[y-2][x] == wall) { // По две клетки за прижок 
-							maze[y-1][x] = pass; // Делаем проход (ставим 1)
-							maze[y-2][x] = pass; // Делаем проход (ставим 1)
-							y -= 2;
+						maze[y-1][x] = pass; // Делаем проход (ставим 1)
+						maze[y-2][x] = pass; // Делаем проход (ставим 1)
+						y -= 2;
 					}
 				} break;
 				case 1: if(y != height-2) {      
@@ -141,7 +146,7 @@ void mazegen(int **maze, int height, int width) {
 				y = 2*(rand()%((height-1)/2))+1;
 			} while (maze[y][x] != pass);
 		}
-	} // На этом и все.
+	}
 }
 
 bool deadend(int x, int y, int** maze, int height, int width){
@@ -172,7 +177,11 @@ bool deadend(int x, int y, int** maze, int height, int width){
 	else a+=1;
 	
 	if(a == 4)
-		return 1;
+		return 1; // Мы в тупике
 	else
-		return 0;
+		return 0; // all ok
 }
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// The end program
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
