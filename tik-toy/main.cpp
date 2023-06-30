@@ -57,9 +57,13 @@ int main() {
 			case 1:
 				if (map[0] == 3 && map[2] == 0) { ai = 2; break; }
 				if (map[2] == 3 && map[0] == 0) { ai = 0; break; }
-				if (map[7] == 3 && map[4] == 0) { ai = 4; break; }
 				if (map[4] == 3 && map[7] == 0) { ai = 7; break; }
+				if (map[7] == 3 && map[4] == 0) { ai = 4; break; }
 				break;
+			case 2:
+				if (map[1] == 3 && map[0] == 0) { ai = 0; break; }
+				if (map[4] == 3 && map[6] == 0) { ai = 6; break; }
+				if (map[5] == 3 && map[8] == 0) { ai = 8; break; }
 			case 3:
 				if (map[0] == 3 && map[6] == 0) { ai = 6; break; }
 				if (map[6] == 3 && map[0] == 0) { ai = 0; break; }
@@ -106,9 +110,6 @@ int main() {
 			drawMap(map);
 			cout << "\nYou win!\n";
 			break;
-		} else {
-			cout << "\nOK\n";
-			break;
 		}
 		
 		map[ai] = 2;
@@ -116,9 +117,6 @@ int main() {
 		if (winCheck(2, map)) {
 			drawMap(map);
 			cout << "\nYou lose!\n";
-			break;
-		} else {
-			cout << "\nOK\n";
 			break;
 		}
 	}
