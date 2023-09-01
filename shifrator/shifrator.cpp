@@ -1,24 +1,23 @@
 #include <iostream>
+#include <fstream>
+using namespace std;
 
-int main() {
-	using namespace std;
-	cout << "Hello, this simple shifrator.\n";
-	cout << "How use? Example: 'Hello,_world1', between words you must type '_'.\n";
-	cout << "Ok, Enter message:\n";
-	string mess;
-	getline(cin, mess);
-	cout << mess.length() << '\n';
-	int key = 33;
-	while (key <= -1 || key >= 31) {
-		cout << "Enter key (0-30): ";
-		cin >> key;
-	}
-	char shfr_mess[mess.length()];
+int main()
+{
+	fstream file("shifrText.txt", ios::out);
+	string str;
+	cout << "Str: ";
+	getline(cin >> ws, str);
 	
-	for (int i = 0; i < static_cast<int>(mess.length()); ++i) {
-		shfr_mess[i] = static_cast<int>(mess[i]) - key;
+	int outStr[str.length()];
+
+	for (int i = 0; i < str.length(); ++i) {
+		outStr[i] = static_cast<int>(str[i]) * 2;
+		file << outStr[i] << endl;
 	}
-	cout << shfr_mess << '\n';
-	cout << sizeof(shfr_mess) / sizeof(shfr_mess[0]) << '\n';
+	for (int f = 0; f < str.length(); ++f) {
+		cout << outStr[f] << ", ";
+	}
+	cout << endl;
 	return 0;
 }
